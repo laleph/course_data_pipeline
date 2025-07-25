@@ -13,6 +13,5 @@ dependencies = [
   "markdownify",
   "playwright>=1.53",
   "pydantic[email]",
-  "reportlab>=4.4.2",
   "xmltodict",
 ]
