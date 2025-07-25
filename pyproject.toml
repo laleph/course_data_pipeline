@@ -1,0 +1,18 @@
+[project]
+name = "kreativeu-catalogue-pipeline"
+version = "0.0.2"
+description = ""
+authors = [ { name = "Lars Lewerentz", email = "lars.lewerentz@uni-greifswald.de" } ]
+requires-python = ">=3.13.3,<3.14"
+classifiers = [ "Programming Language :: Python :: 3 :: Only", "Programming Language :: Python :: 3.13" ]
+
+dependencies = [
+  "bleach",
+  "defusedxml>=0.7.1",
+  "gitpython>=3.1.45",
+  "markdownify",
+  "playwright>=1.53",
+  "pydantic[email]",
+  "reportlab>=4.4.2",
+  "xmltodict",
+]
