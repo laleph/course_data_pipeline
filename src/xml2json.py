@@ -12,22 +12,24 @@ from HISCourse import HISCourse
 
 def remove_duplicate_entries(kreativeu_data_dict):
     """Remove duplicate entries from the SOAP response and update the XML dictionary"""
-    # get courses data from xml_dict
     courses_list = kreativeu_data_dict.get("KreativEU", {}).get("veranstaltung", [])
 
-    # remove duplicate entries
-    # TODO check with Daniel to remove this from the original xml
+    # Create a new list to store courses with duplicates removed
+    cleaned_courses = []
     for course in courses_list:
-        if isinstance(course.get("kommentar"), list):
-            course["kommentar"] = course["kommentar"][0]
-        if isinstance(course.get("literatur"), list):
-            course["literatur"] = course["literatur"][0]
-        if isinstance(course.get("moodle"), list):
-            course["moodle"] = course["moodle"][0]
+        # Create a copy to avoid modifying the original course object in the list
+        cleaned_course = course.copy()
+        if isinstance(cleaned_course.get("kommentar"), list):
+            cleaned_course["kommentar"] = cleaned_course["kommentar"][0]
+        if isinstance(cleaned_course.get("literatur"), list):
+            cleaned_course["literatur"] = cleaned_course["literatur"][0]
+        if isinstance(cleaned_course.get("moodle"), list):
+            cleaned_course["moodle"] = cleaned_course["moodle"][0]
+        cleaned_courses.append(cleaned_course)
 
-    # Update the original xml_dict with modified courses_data
+    # Update the original xml_dict with the new list of courses
     if "KreativEU" in kreativeu_data_dict:
-        kreativeu_data_dict["KreativEU"]["veranstaltung"] = courses_list
+        kreativeu_data_dict["KreativEU"]["veranstaltung"] = cleaned_courses
     else:
         print("Error: 'KreativEU' key not found in XML dictionary.")
         return None
@@ -36,20 +38,17 @@ def remove_duplicate_entries(kreativeu_data_dict):
 
 def remove_tests(kreativeu_data_dict):
     """Remove Test and Examination entries from the SOAP response and update the XML dictionary"""
-    # get courses data from xml_dict
     courses_list = kreativeu_data_dict.get("KreativEU", {}).get("veranstaltung", [])
 
-    for course in courses_list:
-        if course.get("typ") == "Test":
-            courses_list.remove(course)
-        elif course.get("typ") == "Examination":
-            courses_list.remove(course)
-        else:
-            continue
+    # Use a list comprehension to create a new list excluding specified course types
+    filtered_courses = [
+        course for course in courses_list
+        if course.get("typ") not in ["Test", "Examination"]
+    ]
 
-    # Update the original xml_dict with modified courses_data
+    # Update the original xml_dict with the filtered list
     if "KreativEU" in kreativeu_data_dict:
-        kreativeu_data_dict["KreativEU"]["veranstaltung"] = courses_list
+        kreativeu_data_dict["KreativEU"]["veranstaltung"] = filtered_courses
     else:
         print("Error: 'KreativEU' key not found, remove 'Test' and 'Examination' entries failed.")
         return None
@@ -98,7 +97,8 @@ def recursive_conversion(keu_dict):
         return sanitize_and_convert(keu_dict)
 
 
-if __name__ == "__main__":
+def main():
+    """Main function to process the XML file."""
     parser = argparse.ArgumentParser(description="Process an XML file.")
     parser.add_argument(
         "--xml-file",
@@ -109,44 +109,49 @@ if __name__ == "__main__":
     parser.add_argument(
         "--json-output",
         type=str,
-        help="Path to the intermiediate JSON data output file (default: intermediate.json)",
+        help="Path to the intermediate JSON data output file (default: intermediate.json)",
         default="intermediate.json",
     )
     args = parser.parse_args()
-    XML_FILE_PATH = args.xml_file
-    JSON_FILE_PATH = args.json_output
+    xml_file_path = args.xml_file
+    json_file_path = args.json_output
 
-    # read the SOAP xml response from a file
-    with open(XML_FILE_PATH, encoding="utf-8") as f:
-        soap_response = f.read()
+    try:
+        with open(xml_file_path, encoding="utf-8") as f:
+            soap_response = f.read()
 
-    # convert SOAP (XML) to dictionary using xmltodict
-    xml_dict = xmltodict.parse(soap_response)
+        xml_dict = xmltodict.parse(soap_response)
 
-    # Remove tests from the dictionary
-    xml_dict = remove_tests(xml_dict)
-    if xml_dict is not None:
-        # Remove duplicate entries from the dictionary
-        xml_dict = remove_duplicate_entries(xml_dict)
-        if xml_dict is not None:  # Check again in case of error
-            # html to markdown for all strings in the dictionary
+        # Process the data
+        xml_dict = remove_tests(xml_dict)
+        if xml_dict:
+            xml_dict = remove_duplicate_entries(xml_dict)
+        if xml_dict:
             xml_dict = recursive_conversion(xml_dict)
 
-            # write the JSON response to a file
-            json.dump(xml_dict, open(JSON_FILE_PATH, "w", encoding="utf-8"), indent=2)
+            # Write the JSON response to a file
+            with open(json_file_path, "w", encoding="utf-8") as f:
+                json.dump(xml_dict, f, indent=2)
+            print(f"Successfully converted {xml_file_path} to {json_file_path}")
+
+            # Validate data and print debug info
+            courses_data = xml_dict.get("KreativEU", {}).get("veranstaltung", [])
+            his_courses: List[HISCourse] = [HISCourse(**course) for course in courses_data]
+            for hcourse in his_courses:
+                print(f"Course Title: {hcourse.titel}, Type: {hcourse.typ}")
+                if hcourse.lehrperson:
+                    if isinstance(hcourse.lehrperson, list):
+                        for lp in hcourse.lehrperson:
+                            print(f"  Lecturer: {lp.Vorname} {lp.Nachname}")
+                    else:
+                        print(f"  Lecturer: {hcourse.lehrperson.Vorname} {hcourse.lehrperson.Nachname}")
         else:
-            print("Failed to remove duplicate entries.")
+            print("Failed to process XML data.")
 
-    # Check SOAP data according to HISCourse definition
-    courses_data = xml_dict.get("KreativEU", {}).get("veranstaltung", [])
-    his_courses: List[HISCourse] = [HISCourse(**course) for course in courses_data]
+    except FileNotFoundError:
+        print(f"Error: The file {xml_file_path} was not found.")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
 
-    # Output course and lecturer to console for debugging purposes
-    for hcourse in his_courses:
-        print(f"Course Title: {hcourse.titel}, Type: {hcourse.typ}")
-        if hcourse.lehrperson:
-            if isinstance(hcourse.lehrperson, list):
-                for lp in hcourse.lehrperson:
-                    print(f"  Lecturer: {lp.Vorname} {lp.Nachname}")
-            else:  # Single lecturer
-                print(f"  Lecturer: {hcourse.lehrperson.Vorname} {hcourse.lehrperson.Nachname}")
+if __name__ == "__main__":
+    main()

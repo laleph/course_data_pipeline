@@ -131,65 +131,82 @@ def parse_his_datetime(
         return None
 
 
+def _get_assigned_contact(his_course: HISCourse) -> str:
+    """Extracts and formats the assigned contact person from the HIS course data."""
+    his_lehrperson = get_first_item(his_course.lehrperson)
+    if his_lehrperson:
+        parts = [his_lehrperson.Vorname, his_lehrperson.Nachname]
+        return " ".join(filter(None, parts)) or "N/A (Staff)"
+    return "N/A (Staff)"
+
+
+def _get_department_or_field_of_study(his_course: HISCourse) -> str:
+    """Determines the department or field of study from HIS course data."""
+    his_studiengang_item = get_first_item(his_course.studiengang)
+    if his_studiengang_item and his_studiengang_item.Studiengang:
+        return his_studiengang_item.Studiengang
+
+    his_einrichtung = get_first_item(his_course.einrichtung)
+    if his_einrichtung and his_einrichtung.Einrichtung:
+        return his_einrichtung.Einrichtung
+
+    return "N/A (Department)"
+
+
+def _get_study_programme(his_course: HISCourse) -> List[StudyProgramme]:
+    """Determines the study programme from HIS course data."""
+    his_studiengang_item = get_first_item(his_course.studiengang)
+    if his_studiengang_item and his_studiengang_item.Studiengang:
+        sg_lower = his_studiengang_item.Studiengang.lower()
+        if "bachelor" in sg_lower:
+            return [StudyProgramme.Bachelor]
+        if "master" in sg_lower:
+            return [StudyProgramme.Master]
+        if "phd" in sg_lower or "doktor" in sg_lower:
+            return [StudyProgramme.PhD]
+
+    # Default if no specific programme is identified
+    return [StudyProgramme.Bachelor, StudyProgramme.Master, StudyProgramme.PhD]
+
+
+def _combine_course_content(his_course: HISCourse) -> str:
+    """Combines various content fields from HIS course data into a single string."""
+    primary_content = his_course.lerninhalt or ""
+    additional_sections = []
+
+    if his_course.nachweis:
+        additional_sections.append(f"\n## **Assessment**\n{his_course.nachweis}")
+    if his_course.kommentar:
+        additional_sections.append(f"\n## **Comments**\n{his_course.kommentar}")
+    if his_course.bemerkung:
+        additional_sections.append(f"\n## **Remarks**\n{his_course.bemerkung}")
+    if his_course.zugang:
+        additional_sections.append(f"\n## **Access Requirements**\n{his_course.zugang}")
+
+    return f"{primary_content}\n\n" + "\n\n".join(additional_sections)
+
+
+# --- Constants for default values ---
+DEFAULT_LANGUAGE = Language.English
+DEFAULT_MODUS = Modus.Inperson
+DEFAULT_ECTS = 5
+DEFAULT_MIN_PARTICIPANTS = 1
+DEFAULT_COURSE_CONTENT = "Detailed course content to be provided."
+DEFAULT_LEARNING_OUTCOMES = "Specific learning outcomes to be defined."
+DEFAULT_MOODLE_URL = "https://his.uni-greifswald.de/qisserver/rds?state=change&type=5&moduleParameter=veranstaltungSearch&nextdir=change&next=search.vm&subdir=veranstaltung&_form=display&function=search&clean=y&category=veranstaltung.search&navigationPosition=lectures%2Csearch&breadcrumb=searchLectures&topitem=lectures&subitem=search&noDBAction=y&init=y"
+
+
 def map_his_to_keu(
     his_course: HISCourse,
     university: University,
-    default_language: Language = Language.English,
-    # default_ects: int = 5,
-    default_modus: Modus = Modus.Inperson,
+    default_language: Language = DEFAULT_LANGUAGE,
+    default_modus: Modus = DEFAULT_MODUS,
 ) -> KEUCourse:
     """Maps a HISCourse object to a KreativEU KEUCourse object."""
 
     # --- Basic Info ---
     course_name = his_course.titel
     local_course_code = his_course.id
-
-    # --- Contact Person ---
-    his_lehrperson = get_first_item(his_course.lehrperson)
-    assigned_contact_parts = []
-    if his_lehrperson:
-        if his_lehrperson.Vorname:
-            assigned_contact_parts.append(his_lehrperson.Vorname)
-        if his_lehrperson.Nachname:
-            assigned_contact_parts.append(his_lehrperson.Nachname)
-    assigned_contact = " ".join(assigned_contact_parts) if assigned_contact_parts else "N/A (Staff)"
-
-    # # --- Faculty & Department ---
-    # his_einrichtung = get_first_item(his_course.einrichtung)
-    # faculty = (
-    #     his_einrichtung.Einrichtung
-    #     if his_einrichtung and his_einrichtung.Einrichtung
-    #     else "Unknown Faculty"
-    # )
-
-    his_einrichtung = get_first_item(his_course.einrichtung)
-    his_studiengang_item = get_first_item(his_course.studiengang)
-    department_or_field_of_study = (
-        his_studiengang_item.Studiengang
-        if his_studiengang_item and his_studiengang_item.Studiengang
-        # f"Department: {his_einrichtung.Einrichtung}"
-        else (
-            f"{his_einrichtung.Einrichtung}"
-            if his_einrichtung and his_einrichtung.Einrichtung
-            else "N/A (Department)"
-        )
-    )
-
-    # --- Study Programme ---
-    # Default include all
-    study_programme_val = [
-        StudyProgramme.Bachelor,
-        StudyProgramme.Master,
-        StudyProgramme.PhD,
-    ]
-    if his_studiengang_item and his_studiengang_item.Studiengang:
-        sg_lower = his_studiengang_item.Studiengang.lower()
-        if "bachelor" in sg_lower:
-            study_programme_val = [StudyProgramme.Bachelor]
-        elif "master" in sg_lower:
-            study_programme_val = [StudyProgramme.Master]
-        elif "phd" in sg_lower or "doktor" in sg_lower:
-            study_programme_val = [StudyProgramme.PhD]
 
     # --- Type of Course ---
     type_of_course_val = TYPE_OF_COURSE_MAPPING.get(his_course.typ, TypeOfCourse.Other)
@@ -235,103 +252,52 @@ def map_his_to_keu(
 
     kreativeu_term_instance = Term(**kreativeu_term_data) if kreativeu_term_data else None
 
-    def combine_course_content():
-        """Combine the content with additional sections found in HIS."""
-        if his_course.lerninhalt is None:
-            primary_content = ""
-        else:
-            primary_content = his_course.lerninhalt
+    def _handle_email(his_course: HISCourse) -> List[str]:
+        """Extracts email addresses from the HIS course data."""
+        termin_list = his_course.termin if isinstance(his_course.termin, list) else ([his_course.termin] if his_course.termin else [])
 
-        additional_sections = []
+        email_list = []
+        for termin in termin_list:
+            if not termin or not termin.person:
+                continue
 
-        if his_course.nachweis:
-            additional_sections.append(f"\n## **Assessment**\n{his_course.nachweis}")
-
-        if his_course.kommentar:
-            additional_sections.append(f"\n## **Comments**\n{his_course.kommentar}")
-
-        if his_course.bemerkung:
-            # This field might be redundant as Bemerkung and Kommentar are similar in meaning.
-            additional_sections.append(f"\n## **Remarks**\n{his_course.bemerkung}")
-
-        if his_course.zugang:
-            additional_sections.append(f"\n## **Access Requirements**\n{his_course.zugang}")
-
-        return f"{primary_content}\n\n" + "\n\n".join(additional_sections)
-
-    def handle_email():
-        """Email got to complicated. Here is the separate logic."""
-        termin_list = (
-            his_course.termin
-            if isinstance(his_course.termin, list)
-            else [his_course.termin] if his_course.termin is not None else []
-        )
-        email_list = [
-            person.EMail
-            for termin in termin_list
-            if termin.person is not None  # Skip if termin.person is None
-            for person in (termin.person if isinstance(termin.person, list) else [termin.person])
-            if person is not None
-            and person.EMail is not None  # Skip None persons and missing emails
-        ]
+            persons = termin.person if isinstance(termin.person, list) else [termin.person]
+            for person in persons:
+                if person and person.EMail:
+                    email_list.append(person.EMail)
         return email_list
 
-    def handle_moodle_url():
-        # Handle both single and list of URLs
-        moodle_url = (
-            [HttpUrl(url) for url in his_course.moodle]
-            if isinstance(his_course.moodle, list)
-            else (
-                [HttpUrl(his_course.moodle)]
-                if his_course.moodle
-                else [
-                    HttpUrl(
-                        "https://his.uni-greifswald.de/qisserver/rds?state=change&type=5&moduleParameter=veranstaltungSearch&nextdir=change&next=search.vm&subdir=veranstaltung&_form=display&function=search&clean=y&category=veranstaltung.search&navigationPosition=lectures%2Csearch&breadcrumb=searchLectures&topitem=lectures&subitem=search&noDBAction=y&init=y"
-                    )
-                ]
-            )
-        )
-        return moodle_url
+    def _handle_moodle_url(his_course: HISCourse) -> List[HttpUrl]:
+        """Creates a list of Moodle URLs from the HIS course data."""
+        if not his_course.moodle:
+            return [HttpUrl(DEFAULT_MOODLE_URL)]
+
+        urls = his_course.moodle if isinstance(his_course.moodle, list) else [his_course.moodle]
+        return [HttpUrl(url) for url in urls]
 
     # --- Construct KEUCourse ---
     keu_course_data = {
-        "assignedContact": assigned_contact,
-        "courseContent": combine_course_content()
-        or his_course.kommentar
-        or "Detailed course content to be provided.",
+        "assignedContact": _get_assigned_contact(his_course),
+        "courseContent": _combine_course_content(his_course) or DEFAULT_COURSE_CONTENT,
         "courseName": course_name,
-        "departmentOrFieldOfStudy": department_or_field_of_study,
+        "departmentOrFieldOfStudy": _get_department_or_field_of_study(his_course),
         "ectsCredits": None,
-        # "faculty": faculty,
-        "learningOutcomes": his_course.zielgruppe,
-        # or "Specific learning outcomes to be defined.",  # zielgruppe might be better for outcomes
-        "linkToLocalWebsiteOrCatalogue": handle_moodle_url(),
+        "learningOutcomes": his_course.zielgruppe or DEFAULT_LEARNING_OUTCOMES,
+        "linkToLocalWebsiteOrCatalogue": _handle_moodle_url(his_course),
         "localCourseCode": local_course_code,
-        "modus": default_modus,  # TODO check again if there is a corresponding HIS data element
-        "studentsWorkload": (
-            his_course.sws if his_course.sws is not None else None
-        ),  # SWS means weekly hours
-        "studyProgramme": study_programme_val,
+        "modus": default_modus,
+        "studentsWorkload": his_course.sws,
+        "studyProgramme": _get_study_programme(his_course),
         "typeOfCourse": type_of_course_val,
-        # Uni passed as a parameter, UG only within list
-        "university": [university],  # TODO check whether many universities possible in HIS?!
-        "language": default_language,  # Passed as parameter
-        # Optional fields from HISCourse
+        "university": [university],
+        "language": default_language,
         "literatureAndCourseMaterials": his_course.literatur,
-        "maxParticipants": (
-            his_course.maxTeilnehmer
-            if his_course.maxTeilnehmer is not None and his_course.maxTeilnehmer > 0
-            else None
-        ),  # Ensure positive
-        "minParticipants": 1,  # Default from KEUCourse model, HIS doesn't provide this
+        "maxParticipants": his_course.maxTeilnehmer if his_course.maxTeilnehmer and his_course.maxTeilnehmer > 0 else None,
+        "minParticipants": DEFAULT_MIN_PARTICIPANTS,
         "term": kreativeu_term_instance,
-        # Other optional fields in KEUCourse not directly from HISCourse
-        "email": handle_email(),
-        # TODO generate keywords from content, etc. with AI
+        "email": _handle_email(his_course),
         "keywords": None,
-        # not yet existing at UG
         "kreativeuMicroCredentials": None,
-        # first English only, for future (non-)English courses
         "languageLevel": None,
     }
 

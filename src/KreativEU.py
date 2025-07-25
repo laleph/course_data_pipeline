@@ -95,21 +95,17 @@ class Semester(str, Enum):
 class Appointment(BaseModel):
     """An appointment for a course."""
 
-    # TODO this needs changing, e.g. format of schedule, or derived from dates?
-    # datatime.date .datetime .time .timedelta
     courseCycle: Optional[CourseCycle] = Field(
         default=None,
         alias="courseCycle",
         description="The cycle of the course's appointment, e.g., Block course, Weekly course.",
     )
-    # TODO correct? derive weekday from start and end and courseCycle, so that it needs to be datetime
     start: Optional[datetime] = Field(
         default=None, alias="start", description="The start of the appointment."
     )
     end: Optional[datetime] = Field(
         default=None, alias="end", description="The end of the appointment."
     )
-
     startDate: Optional[datetime] = Field(
         default=None, alias="startDate", description="The start date of the appointment."
     )
@@ -156,7 +152,7 @@ class TypeOfCourse(str, Enum):
     Project = "Project"
     Seminar = "Seminar"
     SummerSchool = "Summer School"
-    Other = "Other"  # TODO remove?
+    Other = "Other"
 
 
 class University(str, Enum):
@@ -177,12 +173,9 @@ class University(str, Enum):
     ValahiaUniversityofTargoviste = "Valahia University of Târgoviște"
 
 
-class KEUCourse(BaseModel):  # Inherit from BaseModel
+class KEUCourse(BaseModel):
     """Schema for a university course catalogue entry."""
 
-    # assessment: str = Field(
-    #     description="Description of how the course will be assessed (e.g., Exam, Project, Presentation)."
-    # )
     assignedContact: str = Field(
         description="Name of the person to contact for course-related inquiries or course instructor."
     )
@@ -198,11 +191,6 @@ class KEUCourse(BaseModel):  # Inherit from BaseModel
         ge=0,
         description="The number of ECTS credits awarded for completing the course.",
     )
-    # faculty: str = Field(
-    #     # TODO necessary? faculties and institutes vary among partners, e.g.,
-    #     # Institute or Faculty of Physics, etc.
-    #     description="The faculty or institute offering the course (e.g., Faculty of Science)."
-    # )
     learningOutcomes: Optional[str] = Field(
         default=None, description="What students will be able to do after completing the course."
     )
@@ -219,20 +207,17 @@ class KEUCourse(BaseModel):  # Inherit from BaseModel
     studentsWorkload: Optional[int] = Field(
         default=None,
         ge=1,
-        description="Estimate of the expected student workload per week in hours,e.g., 5 (hours).",
+        description="Estimate of the expected student workload per week in hours, e.g., 5 (hours).",
     )
     studyProgramme: List[StudyProgramme] = Field(
         description="The study programme the course belongs to, e.g., Bachelor, Master, PhD and Lifelong Learning."
     )
     typeOfCourse: TypeOfCourse = Field(
-        # typeOfCourse: Union[List[TypeOfCourse], TypeOfCourse] = Field(
-        # TODO correct? In Math/Physics you have courses with Lecture and Practical sessions
         description="The type of course, e.g., Lecture, Seminar, BIP, COIL, etc.."
     )
     university: List[University] = Field(
         description="Name of the university offering the course. Can be many for Joint Courses."
     )
-
     email: Optional[List[EmailStr]] = Field(
         default=None, description="The email address for course-related inquiries."
     )
@@ -261,9 +246,6 @@ class KEUCourse(BaseModel):  # Inherit from BaseModel
         ge=1,
         description="The minimum number of students required for the course to run.",
     )
-    # prerequisites: Optional[str] = Field(
-    #     default=None, description="Any required prior knowledge or courses."
-    # )
     term: Optional[Term] = Field(default=None)
     KEUCourse: Optional[bool] = Field(default=None, description="Is the course a KreativEU course?")
 
@@ -276,10 +258,3 @@ class KEUCourse(BaseModel):  # Inherit from BaseModel
     )
 
 
-main_model_schema = (
-    KEUCourse.model_json_schema()
-)  # generate JSON-compatible schema from pydantic model
-
-# Save the JSON schema to a file.
-with open("course_catalogue_schema.json", "w", encoding="utf-8") as f:
-    json.dump(main_model_schema, f, ensure_ascii=False, indent=2)
