@@ -185,13 +185,20 @@
           "description": "The semester in which the course is offered, e.g., Autumn/Winter"
         },
         "appointments": {
-          "default": [],
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Appointment"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
           "description": "A list of appointments for the course.",
-          "items": {
-            "$ref": "#/$defs/Appointment"
-          },
-          "title": "Appointments",
-          "type": "array"
+          "title": "Appointments"
         }
       },
       "title": "Term",
@@ -261,7 +268,7 @@
       "anyOf": [
         {
           "minimum": 0,
-          "type": "integer"
+          "type": "number"
         },
         {
           "type": "null"
@@ -326,7 +333,7 @@
       "anyOf": [
         {
           "minimum": 1,
-          "type": "integer"
+          "type": "number"
         },
         {
           "type": "null"
@@ -348,7 +355,7 @@
       "$ref": "#/$defs/TypeOfCourse"
     },
     "university": {
-      "description": "Name of the university offering the course. Can be many for Joint Courses.",
+      "description": "Name of the university offering the course (including abbreviation). Multiple values allowed for Joint Courses.",
       "items": {
         "$ref": "#/$defs/University"
       },
@@ -391,7 +398,8 @@
     "kreativeuMicroCredentials": {
       "anyOf": [
         {
-          "type": "integer"
+          "minimum": 0,
+          "type": "number"
         },
         {
           "type": "null"
@@ -497,5 +505,31 @@
     "language"
   ],
   "title": "KreativEU Course",
-  "type": "object"
+  "type": "object",
+  "uni2abbreviation": {
+    "Adana Alparslan Türkeş Science and Technology University": "ATU",
+    "Breda University of Applied Sciences": "BUas",
+    "D. A. Tsenov Academy of Economics": "TAE",
+    "Opole University of Technology": "OUTech",
+    "Polytechnic University of Tomar": "IPT",
+    "Södertörn University": "SH",
+    "University of Camerino": "UNICAM",
+    "University of Greifswald": "UG",
+    "University of South Bohemia in České Budějovice": "USB",
+    "University of Trnava": "TUT",
+    "Valahia University of Târgoviște": "VUT"
+  },
+  "abbreviation2uni": {
+    "ATU": "Adana Alparslan Türkeş Science and Technology University",
+    "BUas": "Breda University of Applied Sciences",
+    "TAE": "D. A. Tsenov Academy of Economics",
+    "OUTech": "Opole University of Technology",
+    "IPT": "Polytechnic University of Tomar",
+    "SH": "Södertörn University",
+    "UNICAM": "University of Camerino",
+    "UG": "University of Greifswald",
+    "USB": "University of South Bohemia in České Budějovice",
+    "TUT": "University of Trnava",
+    "VUT": "Valahia University of Târgoviște"
+  }
 }

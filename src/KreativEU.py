@@ -22,7 +22,7 @@ from datetime import datetime
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import BaseModel, EmailStr, Field, HttpUrl
+from pydantic import BaseModel, EmailStr, Field, HttpUrl, NonNegativeFloat
 from pydantic.config import ConfigDict
 
 # Enums remain largely the same, but Pydantic can work with them directly.
@@ -111,7 +111,9 @@ class Appointment(BaseModel):
     )
 
     startDate: Optional[datetime] = Field(
-        default=None, alias="startDate", description="The start date of the appointment."
+        default=None,
+        alias="startDate",
+        description="The start date of the appointment.",
     )
     endDate: Optional[datetime] = Field(
         default=None, alias="endDate", description="The end date of the appointment."
@@ -136,8 +138,8 @@ class Term(BaseModel):
         default=None,
         description="The semester in which the course is offered, e.g., Autumn/Winter",
     )
-    appointments: List[Appointment] = Field(
-        default=[],
+    appointments: Optional[List[Appointment]] = Field(
+        default=None,
         description="A list of appointments for the course.",
     )
 
@@ -162,19 +164,17 @@ class TypeOfCourse(str, Enum):
 class University(str, Enum):
     """Name of the university offering the course."""
 
-    AdanaAlparslanTürkeşScienceandTechnologyUniversity = (
-        "Adana Alparslan Türkeş Science and Technology University"
-    )
-    BredaUniversityofAppliedSciences = "Breda University of Applied Sciences"
-    DATsenovAcademyofEconomics = "D. A. Tsenov Academy of Economics"
-    OpoleUniversityofTechnology = "Opole University of Technology"
-    PolytechnicUniversityofTomar = "Polytechnic University of Tomar"
-    SoedertoernUniversity = "Södertörn University"
-    UniversityofCamerino = "University of Camerino"
-    UniversityofGreifswald = "University of Greifswald"
-    UniversityofSouthBohemiainCeskeBudejovice = "University of South Bohemia in České Budějovice"
-    UniversityofTrnava = "University of Trnava"
-    ValahiaUniversityofTargoviste = "Valahia University of Târgoviște"
+    ATU = "Adana Alparslan Türkeş Science and Technology University"
+    BUas = "Breda University of Applied Sciences"
+    TAE = "D. A. Tsenov Academy of Economics"
+    OUTech = "Opole University of Technology"
+    IPT = "Polytechnic University of Tomar"
+    SH = "Södertörn University"
+    UNICAM = "University of Camerino"
+    UG = "University of Greifswald"
+    USB = "University of South Bohemia in České Budějovice"
+    TUT = "University of Trnava"
+    VUT = "Valahia University of Târgoviște"
 
 
 class KEUCourse(BaseModel):  # Inherit from BaseModel
@@ -193,7 +193,7 @@ class KEUCourse(BaseModel):  # Inherit from BaseModel
     departmentOrFieldOfStudy: str = Field(
         description="Department, faculty or field of study the course belongs to (e.g., Physics)."
     )
-    ectsCredits: Optional[int] = Field(
+    ectsCredits: Optional[NonNegativeFloat] = Field(
         default=None,
         ge=0,
         description="The number of ECTS credits awarded for completing the course.",
@@ -204,7 +204,8 @@ class KEUCourse(BaseModel):  # Inherit from BaseModel
     #     description="The faculty or institute offering the course (e.g., Faculty of Science)."
     # )
     learningOutcomes: Optional[str] = Field(
-        default=None, description="What students will be able to do after completing the course."
+        default=None,
+        description="What students will be able to do after completing the course.",
     )
     linkToLocalWebsiteOrCatalogue: List[HttpUrl] = Field(
         description="A link to the course's page on the university's website or course catalogue."
@@ -216,7 +217,7 @@ class KEUCourse(BaseModel):  # Inherit from BaseModel
     moodle: Optional[List[HttpUrl]] = Field(
         description="A link to the Moodle learning platform.", default=None
     )
-    studentsWorkload: Optional[int] = Field(
+    studentsWorkload: Optional[float] = Field(
         default=None,
         ge=1,
         description="Estimate of the expected student workload per week in hours,e.g., 5 (hours).",
@@ -230,7 +231,7 @@ class KEUCourse(BaseModel):  # Inherit from BaseModel
         description="The type of course, e.g., Lecture, Seminar, BIP, COIL, etc.."
     )
     university: List[University] = Field(
-        description="Name of the university offering the course. Can be many for Joint Courses."
+        description="Name of the university offering the course (including abbreviation). Multiple values allowed for Joint Courses."
     )
 
     email: Optional[List[EmailStr]] = Field(
@@ -239,7 +240,7 @@ class KEUCourse(BaseModel):  # Inherit from BaseModel
     keywords: Optional[List[str]] = Field(
         default=None, description="Keywords related to the course."
     )
-    kreativeuMicroCredentials: Optional[int] = Field(
+    kreativeuMicroCredentials: Optional[NonNegativeFloat] = Field(
         default=None,
         description="Number of KreativeU micro-credentials associated with the course.",
     )
@@ -279,6 +280,10 @@ class KEUCourse(BaseModel):  # Inherit from BaseModel
 main_model_schema = (
     KEUCourse.model_json_schema()
 )  # generate JSON-compatible schema from pydantic model
+
+# added mappings for abbreviation <-> full university name
+main_model_schema["uni2abbreviation"] = {e.value: e.name for e in University}
+main_model_schema["abbreviation2uni"] = {e.name: e.value for e in University}
 
 # Save the JSON schema to a file.
 with open("course_catalogue_schema.json", "w", encoding="utf-8") as f:

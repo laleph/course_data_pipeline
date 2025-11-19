@@ -386,7 +386,7 @@ if __name__ == "__main__":
                 # or use a different university as appropriate.
                 mapped_course = map_his_to_keu(
                     course_instance,
-                    university=University.UniversityofGreifswald,
+                    university=University.UG,
                     default_language=Language.English,
                     # default_ects=5,
                     default_modus=Modus.Inperson,
