@@ -214,8 +214,9 @@ class KEUCourse(BaseModel):  # Inherit from BaseModel
         description="The course code used within the local university's system."
     )
     modus: Modus = Field(description="The mode of delivery, e.g., Online, In-person, Hybrid.")
-    moodle: Optional[List[HttpUrl]] = Field(
-        description="A link to the Moodle learning platform.", default=None
+    LMS: Optional[List[HttpUrl]] = Field(
+        description="A link to the local course page on the L(earning) M(anagement) S(ystem) such as Moodle.",
+        default=None,
     )
     studentsWorkload: Optional[float] = Field(
         default=None,

@@ -145,7 +145,7 @@ def map_his_to_keu(
     local_course_code = his_course.id
 
     # --- Contact Person ---
-    his_lehrperson = get_first_item(his_course.lehrperson)
+    his_lehrperson = get_first_item(his_course.lehrperson)  # TODO only first contact? correct
     assigned_contact_parts = []
     if his_lehrperson:
         if his_lehrperson.Vorname:
@@ -281,19 +281,25 @@ def map_his_to_keu(
         moodle_url = (
             [HttpUrl(url) for url in his_course.moodle]
             if isinstance(his_course.moodle, list)
-            else (
-                [HttpUrl(his_course.moodle)]
-                if his_course.moodle
-                else [
-                    HttpUrl(
-                        "https://his.uni-greifswald.de/qisserver/rds?state=change&type=5&moduleParameter=veranstaltungSearch&nextdir=change&next=search.vm&subdir=veranstaltung&_form=display&function=search&clean=y&category=veranstaltung.search&navigationPosition=lectures%2Csearch&breadcrumb=searchLectures&topitem=lectures&subitem=search&noDBAction=y&init=y"
-                    )
-                ]
-            )
+            else ([HttpUrl(his_course.moodle)] if his_course.moodle else [])
         )
         return moodle_url
 
+    def handle_moodle_and_catalogue_url():
+        # Handle both single and list of URLs
+        moodle_url = handle_moodle_url()
+        if moodle_url:
+            return moodle_url
+        else:
+            # if empty default to HIS link
+            return [
+                HttpUrl(
+                    "https://his.uni-greifswald.de/qisserver/rds?state=change&type=5&moduleParameter=veranstaltungSearch&nextdir=change&next=search.vm&subdir=veranstaltung&_form=display&function=search&clean=y&category=veranstaltung.search&navigationPosition=lectures%2Csearch&breadcrumb=searchLectures&topitem=lectures&subitem=search&noDBAction=y&init=y"
+                )
+            ]
+
     # --- Construct KEUCourse ---
+    # TODO only add compulsory items and leave voluntary elements if empty
     keu_course_data = {
         "assignedContact": assigned_contact,
         "courseContent": combine_course_content()
@@ -305,7 +311,7 @@ def map_his_to_keu(
         # "faculty": faculty,
         "learningOutcomes": his_course.zielgruppe,
         # or "Specific learning outcomes to be defined.",  # zielgruppe might be better for outcomes
-        "linkToLocalWebsiteOrCatalogue": handle_moodle_url(),
+        "linkToLocalWebsiteOrCatalogue": handle_moodle_and_catalogue_url(),  # TODO add detailed link to Catalogue
         "localCourseCode": local_course_code,
         "modus": default_modus,  # TODO check again if there is a corresponding HIS data element
         "studentsWorkload": (
@@ -333,6 +339,7 @@ def map_his_to_keu(
         "kreativeuMicroCredentials": None,
         # first English only, for future (non-)English courses
         "languageLevel": None,
+        "LMS": handle_moodle_url(),
     }
 
     # Pydantic handles optional fields defaulting to None if not provided.
