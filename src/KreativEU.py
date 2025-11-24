@@ -226,10 +226,10 @@ class KEUCourse(BaseModel):  # Inherit from BaseModel
     studyProgramme: List[StudyProgramme] = Field(
         description="The study programme the course belongs to, e.g., Bachelor, Master, PhD and Lifelong Learning."
     )
-    typeOfCourse: TypeOfCourse = Field(
+    typeOfCourse: List[TypeOfCourse] = Field(
         # typeOfCourse: Union[List[TypeOfCourse], TypeOfCourse] = Field(
         # TODO correct? In Math/Physics you have courses with Lecture and Practical sessions
-        description="The type of course, e.g., Lecture, Seminar, BIP, COIL, etc.."
+        description="The type of course, e.g., Lecture, Seminar, BIP, COIL, etc. Multiple values allowed."
     )
     university: List[University] = Field(
         description="Name of the university offering the course (including abbreviation). Multiple values allowed for Joint Courses."

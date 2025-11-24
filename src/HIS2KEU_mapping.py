@@ -318,7 +318,7 @@ def map_his_to_keu(
             his_course.sws if his_course.sws is not None else None
         ),  # SWS means weekly hours
         "studyProgramme": study_programme_val,
-        "typeOfCourse": type_of_course_val,
+        "typeOfCourse": [type_of_course_val],
         # Uni passed as a parameter, UG only within list
         "university": [university],  # TODO check whether many universities possible in HIS?!
         "language": default_language,  # Passed as parameter

@@ -310,7 +310,7 @@
     "modus": {
       "$ref": "#/$defs/Modus"
     },
-    "moodle": {
+    "LMS": {
       "anyOf": [
         {
           "items": {
@@ -326,8 +326,8 @@
         }
       ],
       "default": null,
-      "description": "A link to the Moodle learning platform.",
-      "title": "Moodle"
+      "description": "A link to the local course page on the L(earning) M(anagement) S(ystem) such as Moodle.",
+      "title": "Lms"
     },
     "studentsWorkload": {
       "anyOf": [
@@ -352,7 +352,12 @@
       "type": "array"
     },
     "typeOfCourse": {
-      "$ref": "#/$defs/TypeOfCourse"
+      "description": "The type of course, e.g., Lecture, Seminar, BIP, COIL, etc. Multiple values allowed.",
+      "items": {
+        "$ref": "#/$defs/TypeOfCourse"
+      },
+      "title": "Typeofcourse",
+      "type": "array"
     },
     "university": {
       "description": "Name of the university offering the course (including abbreviation). Multiple values allowed for Joint Courses.",
