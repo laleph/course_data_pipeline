@@ -22,7 +22,7 @@ from datetime import datetime
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import BaseModel, EmailStr, Field, HttpUrl, NonNegativeFloat
+from pydantic import BaseModel, EmailStr, Field, HttpUrl, NonNegativeFloat, PositiveInt
 from pydantic.config import ConfigDict
 
 # Enums remain largely the same, but Pydantic can work with them directly.
@@ -75,11 +75,11 @@ class CourseCycle(str, Enum):
     Weekly = "Weekly"
     SingleEvent = "Single Event"
     BiWeekly = "Bi-Weekly"
-    Monthly = "monthly"
-    Quarterly = "quarterly"
+    Monthly = "Monthly"
+    Quarterly = "Quarterly"
     # from here on not really necessary if each semester is separate
-    Annual = "annually"
-    BiAnnual = "Bi-annually"
+    Annual = "Annual"
+    BiAnnual = "Bi-Annual"
 
 
 class Semester(str, Enum):
@@ -102,7 +102,7 @@ class Appointment(BaseModel):
         alias="courseCycle",
         description="The cycle of the course's appointment, e.g., Block course, Weekly course.",
     )
-    # TODO correct? derive weekday from start and end and courseCycle, so that it needs to be datetime
+    # TODO correct? derive weekday from start, end and courseCycle, so that it needs to be datetime
     start: Optional[datetime] = Field(
         default=None, alias="start", description="The start of the appointment."
     )
@@ -177,17 +177,17 @@ class University(str, Enum):
     VUT = "Valahia University of Târgoviște"
 
 
-class KEUCourse(BaseModel):  # Inherit from BaseModel
+class KEUCourse(BaseModel):
     """Schema for a university course catalogue entry."""
 
     # assessment: str = Field(
     #     description="Description of how the course will be assessed (e.g., Exam, Project, Presentation)."
     # )
     assignedContact: str = Field(
-        description="Name of the person to contact for course-related inquiries or course instructor."
+        description="Name of contact person for course-related inquiries or course instructor."
     )
     courseContent: str = Field(
-        description="A detailed description of the course's content, prerequisites, assessment, etc."
+        description="Detailed description of the course's content, prerequisites, assessment, etc."
     )
     courseName: str = Field(description="The official name of the course.")
     departmentOrFieldOfStudy: str = Field(
@@ -215,7 +215,7 @@ class KEUCourse(BaseModel):  # Inherit from BaseModel
     )
     modus: Modus = Field(description="The mode of delivery, e.g., Online, In-person, Hybrid.")
     LMS: Optional[List[HttpUrl]] = Field(
-        description="A link to the local course page on the L(earning) M(anagement) S(ystem) such as Moodle.",
+        description="Link to the local course page on the L(earning) M(anagement) S(ystem), e.g., Moodle.",
         default=None,
     )
     studentsWorkload: Optional[float] = Field(
@@ -227,14 +227,11 @@ class KEUCourse(BaseModel):  # Inherit from BaseModel
         description="The study programme the course belongs to, e.g., Bachelor, Master, PhD and Lifelong Learning."
     )
     typeOfCourse: List[TypeOfCourse] = Field(
-        # typeOfCourse: Union[List[TypeOfCourse], TypeOfCourse] = Field(
-        # TODO correct? In Math/Physics you have courses with Lecture and Practical sessions
-        description="The type of course, e.g., Lecture, Seminar, BIP, COIL, etc. Multiple values allowed."
+        description="The type of course, e.g., Lecture, Seminar, BIP, etc. Multiple values allowed."
     )
     university: List[University] = Field(
         description="Name of the university offering the course (including abbreviation). Multiple values allowed for Joint Courses."
     )
-
     email: Optional[List[EmailStr]] = Field(
         default=None, description="The email address for course-related inquiries."
     )
@@ -278,14 +275,73 @@ class KEUCourse(BaseModel):  # Inherit from BaseModel
     )
 
 
-main_model_schema = (
+single_course_schema = (
     KEUCourse.model_json_schema()
 )  # generate JSON-compatible schema from pydantic model
 
 # added mappings for abbreviation <-> full university name
-main_model_schema["uni2abbreviation"] = {e.value: e.name for e in University}
-main_model_schema["abbreviation2uni"] = {e.name: e.value for e in University}
+single_course_schema["uni2abbreviation"] = {e.value: e.name for e in University}
+single_course_schema["abbreviation2uni"] = {e.name: e.value for e in University}
 
 # Save the JSON schema to a file.
 with open("course_catalogue_schema.json", "w", encoding="utf-8") as f:
-    json.dump(main_model_schema, f, ensure_ascii=False, indent=2)
+    json.dump(single_course_schema, f, ensure_ascii=False, indent=2)
+
+
+class SemesterInfo(BaseModel):
+    """Semester information for the catalogue."""
+
+    semester: List[Semester] = Field(
+        description="The semester in which the course is offered. See Semester definition."
+    )
+    year: List[PositiveInt] = Field(
+        description="Year in which the course is offered. Only use a single year information, e.g., 2026 instead of 2025/26",
+        ge=2025,  # birth year of KreativEU
+        lt=2100,  # far in the future
+    )
+
+
+class Contact(BaseModel):
+    """Contact information for the catalogue."""
+
+    name: List[str] = Field(description="Name(s) of the contact person(s).")
+    email: List[EmailStr] = Field(description="Email address(es) of the contact person(s).")
+
+
+class CatalogueMetadata(BaseModel):
+    """Metadata about the catalogue."""
+
+    # TODO python semver + pydantic
+    version: str = Field(description="Version of the catalogue.")
+    dateOfGeneration: datetime = Field(description="Date when the catalogue was generated.")
+    contact: Contact = Field(description="Contact information for the catalogue.")
+    semester: SemesterInfo = Field(
+        description="Semester information. Only use a single year information, e.g., 2026 instead of 2025/26"
+    )
+
+
+# Define a model for the entire course catalogue
+class CourseCatalogue(BaseModel):
+    """Schema for a complete KreativEU course catalogue."""
+
+    metadata: CatalogueMetadata = Field(
+        description="Metadata about the catalogue, such as version, generation date and contact."
+    )
+    courses: List[KEUCourse] = Field(description="List of KreativEU courses in the catalogue.")
+
+    model_config = ConfigDict(
+        use_enum_values=True,
+        validate_by_name=True,
+        str_strip_whitespace=True,
+        validate_assignment=True,
+        title="KreativEU Course Catalogue",
+    )
+
+
+# Generate JSON schema for the entire catalogue
+catalogue_schema = CourseCatalogue.model_json_schema()
+
+# Save the JSON schema for the catalogue to a separate file.
+with open("course_catalogue_full_schema.json", "w", encoding="utf-8") as f:
+    json.dump(catalogue_schema, f, ensure_ascii=False, indent=2)
+
