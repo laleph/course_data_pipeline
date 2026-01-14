@@ -83,10 +83,10 @@
         "Weekly",
         "Single Event",
         "Bi-Weekly",
-        "monthly",
-        "quarterly",
-        "annually",
-        "Bi-annually"
+        "Monthly",
+        "Quarterly",
+        "Annual",
+        "Bi-Annual"
       ],
       "title": "CourseCycle",
       "type": "string"
@@ -245,12 +245,12 @@
   "description": "Schema for a university course catalogue entry.",
   "properties": {
     "assignedContact": {
-      "description": "Name of the person to contact for course-related inquiries or course instructor.",
+      "description": "Name of contact person for course-related inquiries or course instructor.",
       "title": "Assignedcontact",
       "type": "string"
     },
     "courseContent": {
-      "description": "A detailed description of the course's content, prerequisites, assessment, etc.",
+      "description": "Detailed description of the course's content, prerequisites, assessment, etc.",
       "title": "Coursecontent",
       "type": "string"
     },
@@ -326,7 +326,7 @@
         }
       ],
       "default": null,
-      "description": "A link to the local course page on the L(earning) M(anagement) S(ystem) such as Moodle.",
+      "description": "Link to the local course page on the L(earning) M(anagement) S(ystem), e.g., Moodle.",
       "title": "Lms"
     },
     "studentsWorkload": {
@@ -352,7 +352,7 @@
       "type": "array"
     },
     "typeOfCourse": {
-      "description": "The type of course, e.g., Lecture, Seminar, BIP, COIL, etc. Multiple values allowed.",
+      "description": "The type of course, e.g., Lecture, Seminar, BIP, etc. Multiple values allowed.",
       "items": {
         "$ref": "#/$defs/TypeOfCourse"
       },

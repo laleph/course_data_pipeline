@@ -344,4 +344,3 @@ catalogue_schema = CourseCatalogue.model_json_schema()
 # Save the JSON schema for the catalogue to a separate file.
 with open("course_catalogue_full_schema.json", "w", encoding="utf-8") as f:
     json.dump(catalogue_schema, f, ensure_ascii=False, indent=2)
-

@@ -1,0 +1,626 @@
+{
+  "$defs": {
+    "Appointment": {
+      "description": "An appointment for a course.",
+      "properties": {
+        "courseCycle": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CourseCycle"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cycle of the course's appointment, e.g., Block course, Weekly course."
+        },
+        "start": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The start of the appointment.",
+          "title": "Start"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The end of the appointment.",
+          "title": "End"
+        },
+        "startDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The start date of the appointment.",
+          "title": "Startdate"
+        },
+        "endDate": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The end date of the appointment.",
+          "title": "Enddate"
+        }
+      },
+      "title": "Appointment",
+      "type": "object"
+    },
+    "CatalogueMetadata": {
+      "description": "Metadata about the catalogue.",
+      "properties": {
+        "version": {
+          "description": "Version of the catalogue.",
+          "title": "Version",
+          "type": "string"
+        },
+        "dateOfGeneration": {
+          "description": "Date when the catalogue was generated.",
+          "format": "date-time",
+          "title": "Dateofgeneration",
+          "type": "string"
+        },
+        "contact": {
+          "$ref": "#/$defs/Contact"
+        },
+        "semester": {
+          "$ref": "#/$defs/SemesterInfo",
+          "description": "Semester information. Only use a single year information, e.g., 2026 instead of 2025/26"
+        }
+      },
+      "required": [
+        "version",
+        "dateOfGeneration",
+        "contact",
+        "semester"
+      ],
+      "title": "CatalogueMetadata",
+      "type": "object"
+    },
+    "Contact": {
+      "description": "Contact information for the catalogue.",
+      "properties": {
+        "name": {
+          "description": "Name(s) of the contact person(s).",
+          "items": {
+            "type": "string"
+          },
+          "title": "Name",
+          "type": "array"
+        },
+        "email": {
+          "description": "Email address(es) of the contact person(s).",
+          "items": {
+            "format": "email",
+            "type": "string"
+          },
+          "title": "Email",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "email"
+      ],
+      "title": "Contact",
+      "type": "object"
+    },
+    "CourseCycle": {
+      "description": "The cycle of the course, e.g., Block or Weekly course, etc.",
+      "enum": [
+        "Block",
+        "Flexible",
+        "Weekly",
+        "Single Event",
+        "Bi-Weekly",
+        "Monthly",
+        "Quarterly",
+        "Annual",
+        "Bi-Annual"
+      ],
+      "title": "CourseCycle",
+      "type": "string"
+    },
+    "KEUCourse": {
+      "description": "Schema for a university course catalogue entry.",
+      "properties": {
+        "assignedContact": {
+          "description": "Name of contact person for course-related inquiries or course instructor.",
+          "title": "Assignedcontact",
+          "type": "string"
+        },
+        "courseContent": {
+          "description": "Detailed description of the course's content, prerequisites, assessment, etc.",
+          "title": "Coursecontent",
+          "type": "string"
+        },
+        "courseName": {
+          "description": "The official name of the course.",
+          "title": "Coursename",
+          "type": "string"
+        },
+        "departmentOrFieldOfStudy": {
+          "description": "Department, faculty or field of study the course belongs to (e.g., Physics).",
+          "title": "Departmentorfieldofstudy",
+          "type": "string"
+        },
+        "ectsCredits": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of ECTS credits awarded for completing the course.",
+          "title": "Ectscredits"
+        },
+        "learningOutcomes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "What students will be able to do after completing the course.",
+          "title": "Learningoutcomes"
+        },
+        "linkToLocalWebsiteOrCatalogue": {
+          "description": "A link to the course's page on the university's website or course catalogue.",
+          "items": {
+            "format": "uri",
+            "maxLength": 2083,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Linktolocalwebsiteorcatalogue",
+          "type": "array"
+        },
+        "localCourseCode": {
+          "description": "The course code used within the local university's system.",
+          "title": "Localcoursecode",
+          "type": "string"
+        },
+        "modus": {
+          "$ref": "#/$defs/Modus"
+        },
+        "LMS": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uri",
+                "maxLength": 2083,
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Link to the local course page on the L(earning) M(anagement) S(ystem), e.g., Moodle.",
+          "title": "Lms"
+        },
+        "studentsWorkload": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Estimate of the expected student workload per week in hours,e.g., 5 (hours).",
+          "title": "Studentsworkload"
+        },
+        "studyProgramme": {
+          "description": "The study programme the course belongs to, e.g., Bachelor, Master, PhD and Lifelong Learning.",
+          "items": {
+            "$ref": "#/$defs/StudyProgramme"
+          },
+          "title": "Studyprogramme",
+          "type": "array"
+        },
+        "typeOfCourse": {
+          "description": "The type of course, e.g., Lecture, Seminar, BIP, etc. Multiple values allowed.",
+          "items": {
+            "$ref": "#/$defs/TypeOfCourse"
+          },
+          "title": "Typeofcourse",
+          "type": "array"
+        },
+        "university": {
+          "description": "Name of the university offering the course (including abbreviation). Multiple values allowed for Joint Courses.",
+          "items": {
+            "$ref": "#/$defs/University"
+          },
+          "title": "University",
+          "type": "array"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "email",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The email address for course-related inquiries.",
+          "title": "Email"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Keywords related to the course.",
+          "title": "Keywords"
+        },
+        "kreativeuMicroCredentials": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of KreativeU micro-credentials associated with the course.",
+          "title": "Kreativeumicrocredentials"
+        },
+        "language": {
+          "$ref": "#/$defs/Language"
+        },
+        "languageLevel": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The required language level (e.g., B2, C1).",
+          "title": "Languagelevel"
+        },
+        "literatureAndCourseMaterials": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A list of required and recommended reading materials.",
+          "title": "Literatureandcoursematerials"
+        },
+        "maxParticipants": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The maximum number of students allowed in the course.",
+          "title": "Maxparticipants"
+        },
+        "minParticipants": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "The minimum number of students required for the course to run.",
+          "title": "Minparticipants"
+        },
+        "term": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Term"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "KEUCourse": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Is the course a KreativEU course?",
+          "title": "Keucourse"
+        }
+      },
+      "required": [
+        "assignedContact",
+        "courseContent",
+        "courseName",
+        "departmentOrFieldOfStudy",
+        "linkToLocalWebsiteOrCatalogue",
+        "localCourseCode",
+        "modus",
+        "studyProgramme",
+        "typeOfCourse",
+        "university",
+        "language"
+      ],
+      "title": "KreativEU Course",
+      "type": "object"
+    },
+    "Language": {
+      "description": "The language of instruction.",
+      "enum": [
+        "Bulgarian",
+        "Czech",
+        "Dutch",
+        "English",
+        "German",
+        "Italian",
+        "Other",
+        "Polish",
+        "Portuguese",
+        "Romanian",
+        "Slovakian",
+        "Swedish",
+        "Turkish"
+      ],
+      "title": "Language",
+      "type": "string"
+    },
+    "Modus": {
+      "description": "The mode of delivery, e.g., Online, In-person, Hybrid.",
+      "enum": [
+        "Hybrid",
+        "In-person",
+        "Online"
+      ],
+      "title": "Modus",
+      "type": "string"
+    },
+    "Semester": {
+      "description": "The semester in which the course is offered, e.g., Autumn/Winter.\nAutumn/Winter is the time from Autumn to Spring\nSpring/Summer is the time from Spring to Autumn.",
+      "enum": [
+        "Spring/Summer",
+        "Autumn/Winter"
+      ],
+      "title": "Semester",
+      "type": "string"
+    },
+    "SemesterInfo": {
+      "description": "Semester information for the catalogue.",
+      "properties": {
+        "semester": {
+          "description": "The semester in which the course is offered. See Semester definition.",
+          "items": {
+            "$ref": "#/$defs/Semester"
+          },
+          "title": "Semester",
+          "type": "array"
+        },
+        "year": {
+          "description": "Year in which the course is offered. Only use a single year information, e.g., 2026 instead of 2025/26",
+          "ge": 2025,
+          "items": {
+            "exclusiveMinimum": 0,
+            "type": "integer"
+          },
+          "lt": 2100,
+          "title": "Year",
+          "type": "array"
+        }
+      },
+      "required": [
+        "semester",
+        "year"
+      ],
+      "title": "SemesterInfo",
+      "type": "object"
+    },
+    "StudyProgramme": {
+      "description": "The study programme the course belongs to, e.g., Bachelor, Master, PhD and Lifelong Learning.",
+      "enum": [
+        "Bachelor",
+        "Master",
+        "Lifelong Learning",
+        "PhD"
+      ],
+      "title": "StudyProgramme",
+      "type": "string"
+    },
+    "Term": {
+      "description": "General term information for a course.",
+      "properties": {
+        "registrationEnd": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The end date for course registration.",
+          "title": "Registrationend"
+        },
+        "registrationStart": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The start date for course registration.",
+          "title": "Registrationstart"
+        },
+        "semester": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Semester"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The semester in which the course is offered, e.g., Autumn/Winter"
+        },
+        "appointments": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Appointment"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A list of appointments for the course.",
+          "title": "Appointments"
+        }
+      },
+      "title": "Term",
+      "type": "object"
+    },
+    "TypeOfCourse": {
+      "description": "The type of course, e.g., Lecture, Seminar, BIP, COIL, etc..",
+      "enum": [
+        "BIP",
+        "COIL",
+        "Excursion",
+        "Hackathon",
+        "Internship",
+        "Lecture",
+        "MOOC",
+        "Practical",
+        "Project",
+        "Seminar",
+        "Summer School",
+        "Other"
+      ],
+      "title": "TypeOfCourse",
+      "type": "string"
+    },
+    "University": {
+      "description": "Name of the university offering the course.",
+      "enum": [
+        "Adana Alparslan Türkeş Science and Technology University",
+        "Breda University of Applied Sciences",
+        "D. A. Tsenov Academy of Economics",
+        "Opole University of Technology",
+        "Polytechnic University of Tomar",
+        "Södertörn University",
+        "University of Camerino",
+        "University of Greifswald",
+        "University of South Bohemia in České Budějovice",
+        "University of Trnava",
+        "Valahia University of Târgoviște"
+      ],
+      "title": "University",
+      "type": "string"
+    }
+  },
+  "description": "Schema for a complete KreativEU course catalogue.",
+  "properties": {
+    "metadata": {
+      "$ref": "#/$defs/CatalogueMetadata",
+      "description": "Metadata about the catalogue, such as version, generation date and contact."
+    },
+    "courses": {
+      "description": "List of KreativEU courses in the catalogue.",
+      "items": {
+        "$ref": "#/$defs/KEUCourse"
+      },
+      "title": "Courses",
+      "type": "array"
+    }
+  },
+  "required": [
+    "metadata",
+    "courses"
+  ],
+  "title": "KreativEU Course Catalogue",
+  "type": "object"
+}
