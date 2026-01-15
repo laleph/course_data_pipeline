@@ -79,13 +79,13 @@
       "description": "Metadata about the catalogue.",
       "properties": {
         "version": {
-          "description": "Version of the catalogue.",
+          "description": "Version of the catalogue. Should follow semantic versioning. 1.0.0. For future changes and compatibility.",
           "title": "Version",
           "type": "string"
         },
         "dateOfGeneration": {
           "description": "Date when the catalogue was generated.",
-          "format": "date-time",
+          "format": "date",
           "title": "Dateofgeneration",
           "type": "string"
         },
@@ -94,14 +94,28 @@
         },
         "semester": {
           "$ref": "#/$defs/SemesterInfo",
-          "description": "Semester information. Only use a single year information, e.g., 2026 instead of 2025/26"
+          "description": "Semester info, e.g., 'Autumn/Winter' and  [2025, 2026]"
+        },
+        "numberOfCourses": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Number of courses in the data of the university/catalogue.",
+          "title": "Numberofcourses"
         }
       },
       "required": [
         "version",
         "dateOfGeneration",
         "contact",
-        "semester"
+        "semester",
+        "numberOfCourses"
       ],
       "title": "CatalogueMetadata",
       "type": "object"
@@ -472,7 +486,7 @@
           "type": "array"
         },
         "year": {
-          "description": "Year in which the course is offered. Only use a single year information, e.g., 2026 instead of 2025/26",
+          "description": "Year in which the course is offered. If it spans over 2 years, use a list, e.g., [ 2025, 2026]",
           "ge": 2025,
           "items": {
             "exclusiveMinimum": 0,

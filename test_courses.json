@@ -1,0 +1,445 @@
+{
+"metadata": {"version": "1.0.0",
+            "dateOfGeneration": "2026-01-07",
+            "contact": {
+              "name": ["test name"],
+              "email": ["test@k.eu"]
+              },
+              "numberOfCourses": 7,
+              "semester": {"year": [2025, 2026],
+                            "semester": ["Autumn/Winter"]}
+            },
+"courses": [
+  {
+    "university": [
+      "Adana Alparslan Türkeş Science and Technology University"
+    ],
+    "courseName": "Introduction to Computer Science",
+    "ectsCredits": 6,
+    "typeOfCourse": ["Lecture"],
+    "modus": "In-person",
+    "assignedContact": "Dr. Alice Smith",
+    "email": [
+      "jane.smith@example.edu"
+    ],
+    "localCourseCode": "CS101",
+    "assessment": "Final Exam",
+    "prerequisites": "None",
+    "courseContent": "This course provides a foundational understanding of computer science concepts.",
+    "learningOutcomes": "Students will be able to understand basic algorithms and data structures.",
+    "literatureAndCourseMaterials": "Introduction to Algorithms by Cormen et al.",
+    "linkToLocalWebsiteOrCatalogue": [
+      "https://www.example.edu/courses/CS101"
+    ],
+    "studentsWorkload": 150,
+    "studyProgramme": [
+      "Bachelor"
+    ],
+    "faculty": "Faculty of Science",
+    "departmentOrFieldOfStudy": "Computer Science",
+    "language": "English",
+    "languageLevel": "B2",
+    "maxParticipants": 100,
+    "minParticipants": 20,
+    "keywords": [
+      "computer science",
+      "algorithms",
+      "data structures"
+    ],
+    "kreativeuMicroCredentials": 20,
+    "term": {
+      "registrationEnd": null,
+      "registrationStart": null,
+      "semester": "Spring/Summer",
+      "appointments": [
+        {
+          "courseCycle": "Block",
+          "start": "2025-09-01T06:00:00+00:00",
+          "end": "2025-09-12T15:00:00+00:00",
+          "startDate": "2025-09-01T06:00:00+00:00",
+          "endDate": "2025-09-12T15:00:00+00:00"
+        }
+      ]
+    },
+    "KEUCourse": null
+  },
+  {
+    "university": [
+      "D. A. Tsenov Academy of Economics",
+      "University of South Bohemia in České Budějovice"
+    ],
+    "courseName": "Web Development Fundamentals",
+    "ectsCredits": 4,
+    "typeOfCourse": ["Practical"],
+    "modus": "Online",
+    "assignedContact": "John Doe",
+    "email": [
+      "john.doe@example.edu"
+    ],
+    "localCourseCode": "WEB201",
+    "assessment": "Project",
+    "prerequisites": "Basic programming knowledge",
+    "courseContent": "Learn the basics of HTML, CSS, and JavaScript.",
+    "learningOutcomes": "Students will be able to build simple web pages.",
+    "literatureAndCourseMaterials": "HTML & CSS: Design and Build Websites by Jon Duckett",
+    "linkToLocalWebsiteOrCatalogue": [
+      "https://www.example.edu/courses/WEB201"
+    ],
+    "studentsWorkload": 120,
+    "studyProgramme": [
+      "Bachelor",
+      "Master"
+    ],
+    "faculty": "Faculty of Engineering",
+    "departmentOrFieldOfStudy": "Web Development",
+    "language": "English",
+    "languageLevel": "B2",
+    "maxParticipants": 50,
+    "minParticipants": 10,
+    "keywords": [
+      "web development",
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "kreativeuMicroCredentials": 5,
+    "term": {
+      "registrationEnd": null,
+      "registrationStart": null,
+      "semester": "Spring/Summer",
+      "appointments": [
+        {
+          "courseCycle": "Weekly",
+          "start": "2025-04-09T12:00:00+00:00",
+          "end": "2025-07-16T14:00:00+00:00",
+          "startDate": "2025-04-09T12:00:00+00:00",
+          "endDate": "2025-07-16T14:00:00+00:00"
+        },
+        {
+          "courseCycle": "Weekly",
+          "start": "2025-04-11T12:00:00+00:00",
+          "end": "2025-07-18T14:00:00+00:00",
+          "startDate": "2025-04-11T12:00:00+00:00",
+          "endDate": "2025-07-18T14:00:00+00:00"
+        }
+      ]
+    },
+    "KEUCourse": null
+  },
+  {
+    "university": [
+      "Breda University of Applied Sciences",
+      "University of Camerino"
+    ],
+    "courseName": "Advanced Data Science",
+    "ectsCredits": 8,
+    "typeOfCourse": ["Lecture"],
+    "modus": "Hybrid",
+    "assignedContact": "Alice Johnson",
+    "email": [
+      "alice.johnson@another.edu"
+    ],
+    "localCourseCode": "DS301",
+    "assessment": "Exam and Project",
+    "prerequisites": "Data Science Fundamentals",
+    "courseContent": "Advanced techniques in data analysis and machine learning.",
+    "learningOutcomes": "Students will be able to apply advanced data science methods.",
+    "literatureAndCourseMaterials": "The Elements of Statistical Learning by Hastie et al.",
+    "linkToLocalWebsiteOrCatalogue": [
+      "https://www.another.edu/courses/DS301"
+    ],
+    "studentsWorkload": 200,
+    "studyProgramme": [
+      "Master",
+      "PhD"
+    ],
+    "faculty": "Faculty of Data Science",
+    "departmentOrFieldOfStudy": "Data Science",
+    "language": "English",
+    "languageLevel": "C1",
+    "maxParticipants": 30,
+    "minParticipants": 5,
+    "keywords": [
+      "data science",
+      "machine learning",
+      "statistics"
+    ],
+    "kreativeuMicroCredentials": 7,
+    "term": {
+      "registrationEnd": null,
+      "registrationStart": null,
+      "semester": "Spring/Summer",
+      "appointments": [
+        {
+          "courseCycle": "Weekly",
+          "start": "2025-04-07T08:00:00+00:00",
+          "end": "2025-07-14T10:00:00+00:00",
+          "startDate": "2025-04-07T08:00:00+00:00",
+          "endDate": "2025-07-14T10:00:00+00:00"
+        },
+        {
+          "courseCycle": "Single Event",
+          "start": "2025-04-07T08:00:00+00:00",
+          "end": "2025-04-07T10:00:00+00:00",
+          "startDate": "2025-04-07T08:00:00+00:00",
+          "endDate": "2025-04-07T10:00:00+00:00"
+        }
+      ]
+    },
+    "KEUCourse": null
+  },
+  {
+    "university": [
+      "Polytechnic University of Tomar",
+      "University of Trnava"
+    ],
+    "courseName": "Digital Marketing Strategies",
+    "ectsCredits": 5,
+    "typeOfCourse": ["Seminar"],
+    "modus": "Online",
+    "assignedContact": "Marketing Team",
+    "email": [
+      "marketing.team@ipt.pt"
+    ],
+    "localCourseCode": "MK501",
+    "assessment": "Case Study Analysis",
+    "prerequisites": "Basic knowledge of marketing concepts",
+    "courseContent": "Explore modern digital marketing techniques and strategies.",
+    "learningOutcomes": "Students will be able to develop and implement effective digital marketing campaigns.",
+    "literatureAndCourseMaterials": "Digital Marketing Bible by Dave Chaffey",
+    "linkToLocalWebsiteOrCatalogue": [
+      "https://www.bla.edu/courses/MK501"
+    ],
+    "studentsWorkload": 135,
+    "studyProgramme": [
+      "Bachelor"
+    ],
+    "faculty": "Faculty of Business and Technology",
+    "departmentOrFieldOfStudy": "Marketing",
+    "language": "English",
+    "languageLevel": "B2",
+    "maxParticipants": 40,
+    "minParticipants": 15,
+    "keywords": [
+      "digital marketing",
+      "social media",
+      "SEO"
+    ],
+    "kreativeuMicroCredentials": 10,
+    "term": {
+      "registrationEnd": null,
+      "registrationStart": null,
+      "semester": "Spring/Summer",
+      "appointments": [
+        {
+          "courseCycle": "Single Event",
+          "start": "2025-06-18T09:00:00+00:00",
+          "end": "2025-06-18T10:00:00+00:00",
+          "startDate": "2025-06-18T09:00:00+00:00",
+          "endDate": "2025-06-18T10:00:00+00:00"
+        },
+        {
+          "courseCycle": "Single Event",
+          "start": "2025-06-25T09:00:00+00:00",
+          "end": "2025-06-25T10:00:00+00:00",
+          "startDate": "2025-06-25T09:00:00+00:00",
+          "endDate": "2025-06-25T10:00:00+00:00"
+        },
+        {
+          "courseCycle": "Single Event",
+          "start": "2025-07-02T09:00:00+00:00",
+          "end": "2025-07-02T10:00:00+00:00",
+          "startDate": "2025-07-02T09:00:00+00:00",
+          "endDate": "2025-07-02T10:00:00+00:00"
+        },
+        {
+          "courseCycle": "Single Event",
+          "start": "2025-05-07T09:00:00+00:00",
+          "end": "2025-05-07T10:00:00+00:00",
+          "startDate": "2025-05-07T09:00:00+00:00",
+          "endDate": "2025-05-07T10:00:00+00:00"
+        },
+        {
+          "courseCycle": "Block",
+          "start": "2025-08-04T06:00:00+00:00",
+          "end": "2025-08-08T15:00:00+00:00",
+          "startDate": "2025-08-04T06:00:00+00:00",
+          "endDate": "2025-08-08T15:00:00+00:00"
+        }
+      ]
+    },
+    "KEUCourse": null
+  },
+  {
+    "university": [
+      "Södertörn University",
+      "University of Greifswald"
+    ],
+    "courseName": "UI/UX Design Principles",
+    "ectsCredits": 6,
+    "typeOfCourse": ["Project"],
+    "modus": "Hybrid",
+    "assignedContact": "Design Team",
+    "email": [
+      "design.team@sh.se",
+      "testing.team@sh.se"
+    ],
+    "localCourseCode": "UID201",
+    "assessment": "Portfolio Project",
+    "prerequisites": "Basic knowledge of design tools (e.g., Figma, Adobe XD)",
+    "courseContent": "Learn the principles of user-centered interface and experience design.",
+    "learningOutcomes": "Students will be able to create intuitive and visually appealing digital interfaces.",
+    "literatureAndCourseMaterials": "Don't Make Me Think by Steve Krug",
+    "linkToLocalWebsiteOrCatalogue": [
+      "https://www.ued.edu/courses/UID201",
+      "https://www.test.edu/courses/UID201"
+    ],
+    "studentsWorkload": 180,
+    "studyProgramme": [
+      "Bachelor"
+    ],
+    "faculty": "Faculty of Design and Engineering",
+    "departmentOrFieldOfStudy": "Interaction Design",
+    "language": "English",
+    "languageLevel": "B2",
+    "maxParticipants": 25,
+    "minParticipants": 10,
+    "keywords": [
+      "UI/UX design",
+      "user experience",
+      "interface design"
+    ],
+    "kreativeuMicroCredentials": 0,
+    "term": {
+      "registrationEnd": null,
+      "registrationStart": null,
+      "semester": "Spring/Summer",
+      "appointments": [
+        {
+          "courseCycle": "Bi-Weekly",
+          "start": "2025-04-14T14:00:00+00:00",
+          "end": "2025-07-14T18:00:00+00:00",
+          "startDate": "2025-04-14T14:00:00+00:00",
+          "endDate": "2025-07-14T18:00:00+00:00"
+        }
+      ]
+    },
+    "KEUCourse": null
+  },
+  {
+    "university": [
+      "Opole University of Technology",
+      "Valahia University of Târgoviște"
+    ],
+    "courseName": "Quantum Computing Fundamentals",
+    "ectsCredits": 7,
+    "typeOfCourse": ["Seminar"],
+    "modus": "Online",
+    "assignedContact": "Dr. Alex Quantum",
+    "email": [
+      "aq@uni.opole.pl"
+    ],
+    "localCourseCode": "QC401",
+    "assessment": "Research Paper and Presentation",
+    "prerequisites": "Basic knowledge of linear algebra and physics",
+    "courseContent": "Introduction to quantum mechanics, qubits, and quantum algorithms.",
+    "learningOutcomes": "Students will gain an understanding of the fundamentals of quantum computing.",
+    "literatureAndCourseMaterials": "Quantum Computation and Quantum Information by Nielsen & Chuang",
+    "linkToLocalWebsiteOrCatalogue": [
+      "https://www.uni.opole.pl/courses/QC401"
+    ],
+    "studentsWorkload": 180,
+    "studyProgramme": [
+      "Master"
+    ],
+    "faculty": "Faculty of Physics and Computer Science",
+    "departmentOrFieldOfStudy": "Quantum Computing",
+    "language": "English",
+    "languageLevel": "C1",
+    "maxParticipants": 20,
+    "minParticipants": 5,
+    "keywords": [
+      "quantum computing",
+      "qubits",
+      "quantum algorithms"
+    ],
+    "kreativeuMicroCredentials": 15,
+    "term": {
+      "registrationEnd": null,
+      "registrationStart": null,
+      "semester": "Spring/Summer",
+      "appointments": [
+        {
+          "courseCycle": "Monthly",
+          "start": "2025-05-25T08:00:00+00:00",
+          "end": "2025-07-18T14:00:00+00:00",
+          "startDate": "2025-04-25T08:00:00+00:00",
+          "endDate": "2025-07-18T14:00:00+00:00"
+        }
+      ]
+    },
+    "KEUCourse": null
+  },
+  {
+    "university": [
+      "University of Camerino"
+    ],
+    "courseName": "3D Modeling and Animation",
+    "ectsCredits": 6,
+    "typeOfCourse": ["Summer School"],
+    "modus": "In-person",
+    "assignedContact": "Art Team",
+    "email": [
+      "art.team@unicam.it"
+    ],
+    "localCourseCode": "3DAN101",
+    "assessment": "Final Project",
+    "prerequisites": "Basic knowledge of 3D software (e.g., Blender, Maya)",
+    "courseContent": "Learn advanced techniques in 3D modeling and character animation.",
+    "learningOutcomes": "Students will be able to create complex 3D models and animations.",
+    "literatureAndCourseMaterials": "Blender Basics: A Step-by-Step Guide by Andrew Nuss",
+    "linkToLocalWebsiteOrCatalogue": [
+      "https://www.unicam.it/courses/3DAN101"
+    ],
+    "studentsWorkload": 160,
+    "studyProgramme": [
+      "Bachelor"
+    ],
+    "faculty": "Faculty of Art and Design",
+    "departmentOrFieldOfStudy": "Visual Effects",
+    "language": "English",
+    "languageLevel": "B2",
+    "maxParticipants": 30,
+    "minParticipants": 15,
+    "keywords": [
+      "3D modeling",
+      "animation",
+      "character design"
+    ],
+    "kreativeuMicroCredentials": 10,
+    "term": {
+      "registrationEnd": null,
+      "registrationStart": null,
+      "semester": "Spring/Summer",
+      "appointments": [
+        {
+          "courseCycle": "Weekly",
+          "start": "2025-04-07T10:15:00+00:00",
+          "end": "2025-07-14T11:45:00+00:00",
+          "startDate": "2025-04-07T10:15:00+00:00",
+          "endDate": "2025-07-14T11:45:00+00:00"
+        },
+        {
+          "courseCycle": "Weekly",
+          "start": "2025-04-09T10:15:00+00:00",
+          "end": "2025-07-16T11:45:00+00:00",
+          "startDate": "2025-04-09T10:15:00+00:00",
+          "endDate": "2025-07-16T11:45:00+00:00"
+        }
+      ]
+    },
+    "KEUCourse": null
+  }
+]
+
+}
