@@ -18,7 +18,7 @@ between HIS and KreativEU formats.
 """
 
 import json
-from datetime import datetime
+from datetime import date, datetime
 from enum import Enum
 from typing import List, Optional
 
@@ -123,7 +123,6 @@ class Appointment(BaseModel):
 class Term(BaseModel):
     """General term information for a course."""
 
-    # frequency_of_the_course: Optional[FrequencyOfTheCourse] = Field(default=None, alias="frequencyOfTheCourse", description="How often the course is offered (e.g., Every semester, Every year).")
     registrationEnd: Optional[datetime] = Field(
         default=None,
         alias="registrationEnd",
@@ -181,7 +180,7 @@ class KEUCourse(BaseModel):
     """Schema for a university course catalogue entry."""
 
     # assessment: str = Field(
-    #     description="Description of how the course will be assessed (e.g., Exam, Project, Presentation)."
+    #     description="Description of how the course will be assessed (e.g., Exam, Project, ...)."
     # )
     assignedContact: str = Field(
         description="Name of contact person for course-related inquiries or course instructor."
@@ -295,7 +294,7 @@ class SemesterInfo(BaseModel):
         description="The semester in which the course is offered. See Semester definition."
     )
     year: List[PositiveInt] = Field(
-        description="Year in which the course is offered. Only use a single year information, e.g., 2026 instead of 2025/26",
+        description="Year in which the course is offered. If it spans over 2 years, use a list, e.g., [ 2025, 2026]",
         ge=2025,  # birth year of KreativEU
         lt=2100,  # far in the future
     )
@@ -312,11 +311,16 @@ class CatalogueMetadata(BaseModel):
     """Metadata about the catalogue."""
 
     # TODO python semver + pydantic
-    version: str = Field(description="Version of the catalogue.")
-    dateOfGeneration: datetime = Field(description="Date when the catalogue was generated.")
+    version: str = Field(
+        description="Version of the catalogue. Should follow semantic versioning. 1.0.0. For future changes and compatibility."
+    )
+    dateOfGeneration: date = Field(description="Date when the catalogue was generated.")
     contact: Contact = Field(description="Contact information for the catalogue.")
     semester: SemesterInfo = Field(
-        description="Semester information. Only use a single year information, e.g., 2026 instead of 2025/26"
+        description="Semester info, e.g., 'Autumn/Winter' and  [2025, 2026]"
+    )
+    numberOfCourses: Optional[PositiveInt] = Field(
+        description="Number of courses in the data of the university/catalogue."
     )
 
 
