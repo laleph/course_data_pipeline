@@ -3,7 +3,7 @@ name = "kreativeu-catalogue-pipeline"
 version = "0.0.2"
 description = ""
 authors = [ { name = "Lars Lewerentz", email = "lars.lewerentz@uni-greifswald.de" } ]
-requires-python = ">=3.13.3,<3.14"
+requires-python = ">=3.13,<3.14"
 classifiers = [ "Programming Language :: Python :: 3 :: Only", "Programming Language :: Python :: 3.13" ]
 
 dependencies = [

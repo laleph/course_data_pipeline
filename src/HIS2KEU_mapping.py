@@ -1,6 +1,6 @@
 """HIS2KEU Course Mapping
 
-This module provides utilities to transform data from HISCourse to the KreativEU (KEU) Course format.
+This module provides utilities to transform data from HIS to the KreativEU (KEU) Course format.
 It includes functions for:
 - Date/time parsing from HIS-specific formats
 - Type mapping between HIS and KEUCourse enums
@@ -18,10 +18,15 @@ Usage:
 
 import argparse
 import json
+import os
+import sys
 from datetime import datetime, timezone
 from typing import Dict, List, Optional, TypeVar, Union
 
 from pydantic import HttpUrl
+
+# Add src directory to sys.path to allow imports
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from HISCourse import CourseCycle as HISCourseCycle
 from HISCourse import (
@@ -40,6 +45,10 @@ from KreativEU import (
     Term,
     TypeOfCourse,
     University,
+)
+
+_DEFAULT_HIS_CATALOGUE_URL = HttpUrl(
+    "https://his.uni-greifswald.de/qisserver/rds?state=change&type=5&moduleParameter=veranstaltungSearch&nextdir=change&next=search.vm&subdir=veranstaltung&_form=display&function=search&clean=y&category=veranstaltung.search&navigationPosition=lectures%2Csearch&breadcrumb=searchLectures&topitem=lectures&subitem=search&noDBAction=y&init=y"
 )
 
 T = TypeVar("T")  # Define T as a TypeVar
@@ -76,12 +85,14 @@ TYPE_OF_COURSE_MAPPING: Dict[HISCourseTyp, TypeOfCourse] = {
     HISCourseTyp.Test: TypeOfCourse.Other,  # Assessment, not a course type
     HISCourseTyp.Lecture: TypeOfCourse.Lecture,
     HISCourseTyp.Advanced_Seminar: TypeOfCourse.Seminar,
+    HISCourseTyp.Senior_Seminar: TypeOfCourse.Seminar,
     HISCourseTyp.Examination: TypeOfCourse.Other,  # Assessment
     HISCourseTyp.Artistic_Training: TypeOfCourse.Practical,
     HISCourseTyp.Practice: TypeOfCourse.Practical,
     HISCourseTyp.Seminar_Practical: TypeOfCourse.Seminar,  # Prioritizing Seminar
-    HISCourseTyp.Lecture_Practical_Course: TypeOfCourse.Practical,  # Prioritizing Lecture
+    HISCourseTyp.Lecture_Practical_Course: TypeOfCourse.Practical,
     HISCourseTyp.Practical_Course: TypeOfCourse.Practical,
+    HISCourseTyp.Project: TypeOfCourse.Project,
 }
 
 COURSE_CYCLE_MAP = {
@@ -111,7 +122,7 @@ DAY_MAP_HIS_TO_VERBOSE = {
 def parse_his_datetime(
     date_str: Optional[str], time_str: Optional[str] = None
 ) -> Optional[datetime]:
-    """Parses date and optional time strings from HIS format to datetime objects (ISO 8601) in UTC."""
+    """Parses date and optional time strings from HIS format to datetime (ISO 8601) in UTC."""
     if not date_str:
         return None
     try:
@@ -192,7 +203,16 @@ def map_his_to_keu(
             study_programme_val = [StudyProgramme.PhD]
 
     # --- Type of Course ---
-    type_of_course_val = TYPE_OF_COURSE_MAPPING.get(his_course.typ, TypeOfCourse.Other)
+    # now a list
+    lookup_result = TYPE_OF_COURSE_MAPPING.get(his_course.typ, None)
+    if lookup_result is None:
+        # Try lookup by value string to handle namespace collision
+        lookup_result = next(
+            (v for k, v in TYPE_OF_COURSE_MAPPING.items() if k.value == his_course.typ.value),
+            TypeOfCourse.Other,
+        )
+
+    type_of_course_val = lookup_result
 
     # --- Term Information ---
     kreativeu_term_data = {}
@@ -260,20 +280,27 @@ def map_his_to_keu(
         return f"{primary_content}\n\n" + "\n\n".join(additional_sections)
 
     def handle_email():
-        """Email got to complicated. Here is the separate logic."""
+        """Extract email addresses from course terminations."""
+        if not his_course.termin:
+            return []
+
+        # Ensure termin is a list for consistent processing
         termin_list = (
-            his_course.termin
-            if isinstance(his_course.termin, list)
-            else [his_course.termin] if his_course.termin is not None else []
+            his_course.termin if isinstance(his_course.termin, list) else [his_course.termin]
         )
-        email_list = [
-            person.EMail
-            for termin in termin_list
-            if termin.person is not None  # Skip if termin.person is None
-            for person in (termin.person if isinstance(termin.person, list) else [termin.person])
-            if person is not None
-            and person.EMail is not None  # Skip None persons and missing emails
-        ]
+
+        email_list = []
+        for termin in termin_list:
+            if not termin.person:
+                continue
+
+            # Handle both single person and list of persons
+            persons = termin.person if isinstance(termin.person, list) else [termin.person]
+
+            for person in persons:
+                if person and hasattr(person, "EMail") and person.EMail:
+                    email_list.append(person.EMail)
+
         return email_list
 
     def handle_moodle_url():
@@ -292,11 +319,7 @@ def map_his_to_keu(
             return moodle_url
         else:
             # if empty default to HIS link
-            return [
-                HttpUrl(
-                    "https://his.uni-greifswald.de/qisserver/rds?state=change&type=5&moduleParameter=veranstaltungSearch&nextdir=change&next=search.vm&subdir=veranstaltung&_form=display&function=search&clean=y&category=veranstaltung.search&navigationPosition=lectures%2Csearch&breadcrumb=searchLectures&topitem=lectures&subitem=search&noDBAction=y&init=y"
-                )
-            ]
+            return [_DEFAULT_HIS_CATALOGUE_URL]
 
     # --- Construct KEUCourse ---
     # TODO only add compulsory items and leave voluntary elements if empty

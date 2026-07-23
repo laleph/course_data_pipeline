@@ -20,7 +20,7 @@ between HIS and KreativEU formats.
 import json
 from datetime import date, datetime
 from enum import Enum
-from typing import List, Optional
+from typing import Annotated, List, Optional
 
 from pydantic import BaseModel, EmailStr, Field, HttpUrl, NonNegativeFloat, PositiveInt
 from pydantic.config import ConfigDict
@@ -125,12 +125,12 @@ class Term(BaseModel):
 
     registrationEnd: Optional[datetime] = Field(
         default=None,
-        alias="registrationEnd",
+        # alias="registrationEnd",
         description="The end date for course registration.",
     )
     registrationStart: Optional[datetime] = Field(
         default=None,
-        alias="registrationStart",
+        # alias="registrationStart",
         description="The start date for course registration.",
     )
     semester: Optional[Semester] = Field(
@@ -293,10 +293,10 @@ class SemesterInfo(BaseModel):
     semester: List[Semester] = Field(
         description="The semester in which the course is offered. See Semester definition."
     )
-    year: List[PositiveInt] = Field(
+    year: List[Annotated[PositiveInt, Field(ge=2025, lt=2100)]] = Field(
         description="Year in which the course is offered. If it spans over 2 years, use a list, e.g., [ 2025, 2026]",
-        ge=2025,  # birth year of KreativEU
-        lt=2100,  # far in the future
+        # ge=2025,  # birth year of KreativEU
+        # lt=2100,  # far in the future
     )
 
 

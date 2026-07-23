@@ -1,11 +1,16 @@
 import argparse
 import json
+import os
 import re
+import sys
 from typing import List
 
 import bleach
 import xmltodict
 from markdownify import markdownify
+
+# Add src directory to sys.path to allow imports
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from HISCourse import HISCourse
 
@@ -39,17 +44,14 @@ def remove_tests(kreativeu_data_dict):
     # get courses data from xml_dict
     courses_list = kreativeu_data_dict.get("KreativEU", {}).get("veranstaltung", [])
 
-    for course in courses_list:
-        if course.get("typ") == "Test":
-            courses_list.remove(course)
-        elif course.get("typ") == "Examination":
-            courses_list.remove(course)
-        else:
-            continue
+    # Create a new list without tests and examinations to avoid modifying list during iteration
+    filtered_courses = [
+        course for course in courses_list if course.get("typ") not in ["Test", "Examination"]
+    ]
 
     # Update the original xml_dict with modified courses_data
     if "KreativEU" in kreativeu_data_dict:
-        kreativeu_data_dict["KreativEU"]["veranstaltung"] = courses_list
+        kreativeu_data_dict["KreativEU"]["veranstaltung"] = filtered_courses
     else:
         print("Error: 'KreativEU' key not found, remove 'Test' and 'Examination' entries failed.")
         return None
