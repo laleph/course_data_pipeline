@@ -29,11 +29,7 @@ from pydantic import HttpUrl
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from HISCourse import CourseCycle as HISCourseCycle
-from HISCourse import (
-    HISCourse,
-    RootResponse,
-    Termin,
-)
+from HISCourse import HISCourse, RootResponse, Termin
 from HISCourse import Typ as HISCourseTyp
 from KreativEU import CourseCycle as KEUCourseCycle
 from KreativEU import (
