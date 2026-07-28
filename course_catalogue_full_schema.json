@@ -487,12 +487,12 @@
         },
         "year": {
           "description": "Year in which the course is offered. If it spans over 2 years, use a list, e.g., [ 2025, 2026]",
-          "ge": 2025,
           "items": {
+            "exclusiveMaximum": 2100,
             "exclusiveMinimum": 0,
+            "minimum": 2025,
             "type": "integer"
           },
-          "lt": 2100,
           "title": "Year",
           "type": "array"
         }
