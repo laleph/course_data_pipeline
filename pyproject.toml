@@ -11,7 +11,7 @@ classifiers = [
 dependencies = [
   "bleach==6.4.0",
   "defusedxml==0.7.1",
-  "gitpython==3.1.57",
+  "gitpython==3.1.58",
   "markdownify==1.2.3",
   "playwright==1.61.0",
   "pydantic[email]==2.13.4",
