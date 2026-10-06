@@ -16,6 +16,6 @@ dependencies = [
   "playwright==1.61.0",
   "pydantic[email]==2.13.4",
   "python-dotenv==1.2.2",
-  "urllib3==2.7.0",
+  "urllib3==2.8.0",
   "xmltodict==1.0.4",
 ]
